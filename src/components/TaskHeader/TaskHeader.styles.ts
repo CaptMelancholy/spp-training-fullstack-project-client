@@ -23,6 +23,7 @@ export const TaskHeaderSearchBar = styled.input`
   width: 100%;
   &::placeholder {
     font-family: inherit;
+    opacity: 0.75;
     color: ${({ theme }) => theme.colors.placeholder};
   }
 `;
@@ -34,15 +35,6 @@ export const TaskHeaderSearchBarIcon = styled.div`
   & > svg {
     color: ${({ theme }) => theme.colors.purple};
   }
-`;
-
-export const TaskAddNewButton = styled.button`
-  background-color: ${({ theme }) => theme.colors.purple};
-  color: ${({ theme }) => theme.colors.primary};
-  font-family: inherit;
-  padding: 5px 20px;
-  border-radius: 5px;
-  font-size: 18px;
 `;
 
 export const TaskHeaderFilterContainer = styled.div`

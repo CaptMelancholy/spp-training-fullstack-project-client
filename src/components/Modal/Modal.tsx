@@ -1,17 +1,19 @@
 import * as S from './Modal.styles';
 import { ReactNode, useContext } from 'react';
-import IconButton from '../IconButton/IconButton';
-import { EType } from '../IconButton/IconButton.types';
 import ScreenContext from '../../context/screenContext';
+import * as C from '../../styles/components';
 
 interface IProps {
+  title: string;
   showModal: boolean;
   setShowModal: (flag: boolean) => void;
   children: ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  $onSubmit?: any;
 }
 
 export default function Modal(props: IProps) {
-  const { showModal, setShowModal, children } = props;
+  const { title, showModal, setShowModal, children, $onSubmit } = props;
   const { setScreen } = useContext(ScreenContext);
   const clickOnClose = () => {
     document.body.style.overflow = 'scroll';
@@ -22,13 +24,25 @@ export default function Modal(props: IProps) {
     showModal && (
       <S.ModalContainer>
         <S.ModalNavigation>
-          <IconButton
-            $size={16}
-            onActionDoNext={clickOnClose}
-            buttonType={EType.close}
-          />
+          <S.ModalTitle>{title}</S.ModalTitle>
         </S.ModalNavigation>
-        {children}
+        <S.ModalFormField onSubmit={$onSubmit}>
+          {children}
+          <S.ModalFooter>
+            <C.Button
+              $buttonType={C.EButtonType.empty}
+              onClick={clickOnClose}
+            >
+              Cancel
+            </C.Button>
+            <C.Button
+              $buttonType={C.EButtonType.fill}
+              type='submit'
+            >
+              Apply
+            </C.Button>
+          </S.ModalFooter>
+        </S.ModalFormField>
       </S.ModalContainer>
     )
   );

@@ -1,9 +1,11 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import * as S from './TaskHeader.styles';
+import * as C from '../../styles/components'
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { EStatuses } from '../../utils/Task/Task.types';
 import { useTaskFilter } from '../../context/taskFilterHooks';
 import ScreenContext from '../../context/screenContext';
+import ModalAdd from '../Modal/ModalAdd/ModalAdd';
 
 export default function TaskHeader() {
   const { search, filter, setSearch, setFilter } = useTaskFilter();
@@ -18,10 +20,10 @@ export default function TaskHeader() {
 
   return (
     <>
-      {/* MODAL */}
+      <ModalAdd showModal={showModal} setShowModal={setShowModal} />
       <S.TaskHeaderContainer>
         <S.TaskHeaderSearchBarContainer>
-          <S.TaskHeaderSearchBar
+          <C.Input
             type='text'
             placeholder='Enter search data...'
             value={search}
@@ -53,7 +55,7 @@ export default function TaskHeader() {
             </S.TaskHeaderFilterOptions>
           </S.TaskHeaderFilter>
         </S.TaskHeaderFilterContainer>
-        <S.TaskAddNewButton onClick={handleAddClick}>Add</S.TaskAddNewButton>
+        <C.Button $buttonType={C.EButtonType.fill} onClick={handleAddClick}>Add</C.Button>
       </S.TaskHeaderContainer>
     </>
   );

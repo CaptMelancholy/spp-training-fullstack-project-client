@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { EStatuses } from '../../utils/Task/Task.types';
 
-export enum EButtonType {
+export enum EIconButtonType {
   Delete,
-  Edit
+  Edit,
 }
 
 export const TaskCardContainer = styled.div`
@@ -108,15 +108,17 @@ export const TaskCardOptionsContainer = styled.div`
   align-items: flex-start;
 `;
 
-export const TaskCardOptionsButton = styled.button< { $type: EButtonType }>`
+export const TaskCardOptionsButton = styled.button<{ $type: EIconButtonType }>`
   color: ${({ theme }) => theme.colors.grey};
   background: none;
   &:hover {
-    color: ${({ theme, $type }) => $type === EButtonType.Delete ? theme.colors.hover_red : theme.colors.purple };
+    color: ${({ theme, $type }) =>
+      $type === EIconButtonType.Delete
+        ? theme.colors.hover_red
+        : theme.colors.purple};
   }
   & > svg {
     width: 20px;
     height: 100%;
-
   }
-` 
+`;

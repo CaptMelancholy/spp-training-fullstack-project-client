@@ -6,26 +6,42 @@ export const ModalContainer = styled.div`
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
+  border-radius: 10px;
   width: 50%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   align-items: center;
   padding: 20px;
   z-index: 200;
 `;
 
+export const ModalTitle = styled.div`
+  text-transform: uppercase;
+  font-size: 20px;
+  color: ${({ theme }) => theme.colors.black};
+`;
+
 export const ModalNavigation = styled.div`
   display: flex;
-  justify-content: end;
+  justify-content: center;
   cursor: pointer;
   width: 100%;
-  color: ${({ theme }) => theme.colors.purple};
-  & > svg {
-    width: 15px;
-    height: auto;
-  }
+  color: ${({ theme }) => theme.colors.black};
+`;
+
+export const ModalFormField = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
 `;
 
 export const ModalContentContainer = styled.div`

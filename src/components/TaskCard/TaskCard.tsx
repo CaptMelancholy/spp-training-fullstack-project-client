@@ -3,9 +3,10 @@ import { EStatuses, ITask } from '../../utils/Task/Task.types';
 import * as S from './TaskCard.styles';
 import { FaCalendarDays, FaPen, FaRegTrashCan } from 'react-icons/fa6';
 import { useDispatch } from 'react-redux';
-import { deleteTask } from '../../store/thunks/tasks.thunk';
+import { deleteTask, putTask } from '../../store/thunks/tasks.thunk';
 import { AppDispatch } from '../../store';
 import ScreenContext from '../../context/screenContext';
+import ModalEdit from '../Modal/ModalEdit/ModalEdit';
 
 export default function TaskCard({ id, title, deadline, status }: ITask) {
   const [check, setCheck] = useState<boolean>(false);
@@ -21,6 +22,25 @@ export default function TaskCard({ id, title, deadline, status }: ITask) {
   }, []);
 
   const handleCheckClick = () => {
+    const postThisTask = async (task: ITask) => {
+      dispatch(putTask({ task }));
+    };
+    const todayDate = new Date();
+    const currentDate = new Date(deadline);
+    todayDate.setHours(0, 0, 0, 0);
+    const newStatus = !check
+      ? EStatuses.Complete
+      : todayDate >= currentDate
+      ? EStatuses.Deadline
+      : EStatuses.InProgress;
+
+    const newTask: ITask = {
+      id,
+      title,
+      deadline,
+      status: newStatus,
+    };
+    postThisTask(newTask);
     setCheck(!check);
   };
 
@@ -45,7 +65,11 @@ export default function TaskCard({ id, title, deadline, status }: ITask) {
 
   return (
     <>
-      {/* MODAL */}
+      <ModalEdit
+        showModal={showModal}
+        setShowModal={setShowModal}
+        task={{ id, title, deadline, status }}
+      />
       <S.TaskCardContainer>
         <S.TaskCardInfoField>
           <S.TaskCardTitleContainer>
@@ -75,13 +99,13 @@ export default function TaskCard({ id, title, deadline, status }: ITask) {
         </S.TaskCardInfoField>
         <S.TaskCardOptionsContainer>
           <S.TaskCardOptionsButton
-            $type={S.EButtonType.Edit}
+            $type={S.EIconButtonType.Edit}
             onClick={handleEditClick}
           >
             <FaPen />
           </S.TaskCardOptionsButton>
           <S.TaskCardOptionsButton
-            $type={S.EButtonType.Delete}
+            $type={S.EIconButtonType.Delete}
             onClick={handleDeleteClick}
           >
             <FaRegTrashCan />

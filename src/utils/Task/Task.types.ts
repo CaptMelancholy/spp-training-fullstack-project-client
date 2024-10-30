@@ -3,6 +3,7 @@ export interface ITask {
     title: string;
     deadline: string;
     status: EStatuses;
+    files?: Array<IFile>;
 }
 
 export enum EStatuses {

@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }: IProps) => {
       }
     };
     checkAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

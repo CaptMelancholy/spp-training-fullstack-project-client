@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import PageTemplate from '../PagesTemplate/Template';
 import TaskHeader from '../../components/TaskHeader/TaskHeader';
 import TaskCardList from '../../components/TaskCardList/TaskCardList';
@@ -25,7 +26,6 @@ export default function MainPage() {
       dispatch(getTasks());
     };
     getOurTasks();
-    console.log('Чью то мать поймали');
   }, [user]);
   return (
     <PrivateRoute>

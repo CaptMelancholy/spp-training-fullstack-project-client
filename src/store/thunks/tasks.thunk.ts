@@ -8,14 +8,17 @@ import {
   setTasks,
 } from '../slices/tasks/tasks.slice';
 import { ITask } from '../../utils/Task/Task.types';
+import socket from '../../API/socket';
 
 export const getTasks = createAsyncThunk<void, void, { state: RootState }>(
   'tasks/get',
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await api.get(`tasks`);
-      console.log(response.data);
-      dispatch(setTasks(response.data));
+      socket.emit('getTasks');
+
+      socket.on('tasksData', (tasks: Array<ITask>) => {
+        dispatch(setTasks(tasks));
+      });
     } catch (e) {
       rejectWithValue(e);
     }
@@ -26,8 +29,11 @@ export const postTask = createAsyncThunk<void, { task: ITask }>(
   'tasks/post',
   async ({ task }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await api.post(`tasks`, task);
-      dispatch(pushTask(response.data));
+      socket.emit('addTask', task);
+
+      socket.on('taskAdded', (newTask: ITask) => {
+        dispatch(pushTask(newTask));
+      });
     } catch (e) {
       rejectWithValue(e);
     }
@@ -39,13 +45,15 @@ export const putTask = createAsyncThunk<void, { task: ITask; file?: File }>(
   async ({ task, file }, { dispatch, rejectWithValue }) => {
     try {
       if (file) {
-        const response = await api.put(`tasks/${task.id}`, {task, file});
+        const response = await api.put(`tasks/${task.id}`, { task, file });
         dispatch(editTask(response.data));
       } else {
-        const response = await api.put(`tasks/${task.id}`, task);
-        dispatch(editTask(response.data));
+        socket.emit('updateTask', task);
+
+        socket.on('taskUpdated', (updatedTask: ITask) => {
+          dispatch(editTask(updatedTask));
+        });
       }
-      
     } catch (e) {
       rejectWithValue(e);
     }
@@ -56,8 +64,11 @@ export const deleteTask = createAsyncThunk<void, { task: ITask }>(
   'tasks/delete',
   async ({ task }, { dispatch, rejectWithValue }) => {
     try {
-      await api.delete(`tasks/${task.id}`);
-      dispatch(popTask(task));
+      socket.emit('deleteTask', task.id);
+
+      socket.on('taskDeleted', (deletedTask: ITask) => { 
+        dispatch(popTask(deletedTask)); 
+      });
     } catch (e) {
       rejectWithValue(e);
     }

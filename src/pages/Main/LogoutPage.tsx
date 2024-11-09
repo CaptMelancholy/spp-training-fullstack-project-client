@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
 import { generatePath, Navigate, useNavigate } from 'react-router-dom';
 import DefaultRoutes from '../../routes/Routes';
 import { useAuth } from '../../context/AuthHooks';

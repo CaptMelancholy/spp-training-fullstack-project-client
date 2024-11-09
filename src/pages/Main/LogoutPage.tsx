@@ -8,6 +8,7 @@ import axios from 'axios';
 import { PrivateRoute } from '../../components/Routes/PriveteRoute';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/users/users.slice';
+import { disconnectSocket } from '../../API/socket';
 
 export default function LogoutPage() {
   const { setAuth } = useAuth();
@@ -19,6 +20,7 @@ export default function LogoutPage() {
         await api.post('logout');
         setAuth(null);
         dispatch(setUser(false));
+        disconnectSocket();
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.status);

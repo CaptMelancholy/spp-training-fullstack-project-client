@@ -10,6 +10,7 @@ import api from '../../API/api';
 import { useAuth } from '../../context/AuthHooks';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/users/users.slice';
+import { connectSocket } from '../../API/socket';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function Auth() {
         const response = await api.post('login', user);
         setAuth(response.data.username);
         dispatch(setUser(true));
+        connectSocket();
         navigate(DefaultRoutes.home);
       } catch (error) {
         if (axios.isAxiosError(error)) {

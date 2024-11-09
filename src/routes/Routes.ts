@@ -1,9 +1,11 @@
 const DefaultRoutes = {
   default: '/',
-  home: 'home',
+  home: '/home',
   authorization: '/auth',
   registration: '/reg',
-  activation_comp: '/success',
+  success: '/success',
+  error: '/error',
+  logout: '/logout',
 };
 
 export default DefaultRoutes;

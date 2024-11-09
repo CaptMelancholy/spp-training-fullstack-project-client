@@ -48,7 +48,7 @@ export const Input = styled.input`
 export const Error = styled.label`
   font-size: 12px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.red};
+  color: ${({ theme }) => theme.colors.hover_red};
 `;
 
 export const Text = styled.p<{

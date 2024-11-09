@@ -8,10 +8,11 @@ import ESliceNames from './store.types';
 import { useDispatch } from 'react-redux';
 import { listenerMiddleware } from './middleware';
 import tasksReducer from './slices/tasks/tasks.slice';
+import usersReducer from './slices/users/users.slice';
 
 const rootReducer = combineReducers({
   [ESliceNames.TASKS_SLICE_NAME]: tasksReducer,
-  // [ESliceNames.USER_SLICE_NAME]: userReducer,
+  [ESliceNames.USER_SLICE_NAME]: usersReducer,
 });
 
 const setupStore = () => configureStore({

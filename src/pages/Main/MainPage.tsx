@@ -25,7 +25,6 @@ export default function MainPage() {
       dispatch(getTasks());
     };
     getOurTasks();
-    console.log('Чью то мать поймали');
   }, [user]);
   return (
     <PrivateRoute>

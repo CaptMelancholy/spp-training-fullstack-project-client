@@ -8,22 +8,21 @@ import {
   setTasks,
 } from '../slices/tasks/tasks.slice';
 import { ITask } from '../../utils/Task/Task.types';
-import { getSocket } from '../../API/socket';
+import { ADD_TASK, DELETE_TASK, GET_TASKS, UPDATE_TASK } from '../../API/graphql';
+import { client } from '../../API/client';
 
 export const getTasks = createAsyncThunk<void, void, { state: RootState }>(
   'tasks/get',
   async (_, { dispatch, rejectWithValue }) => {
-    const socket = getSocket();
-    if (socket) {
-      try {
-        socket.emit('getTasks');
-
-        socket.on('tasksData', (tasks: Array<ITask>) => {
-          dispatch(setTasks(tasks));
-        });
-      } catch (e) {
-        rejectWithValue(e);
-      }
+    try {
+      const { data } = await client.query({
+        query: GET_TASKS,
+      });
+      console.log(data);
+      console.log('Приняли');
+      dispatch(setTasks(data.getTasks));
+    } catch (e) {
+      rejectWithValue(e);
     }
   },
 );
@@ -31,17 +30,21 @@ export const getTasks = createAsyncThunk<void, void, { state: RootState }>(
 export const postTask = createAsyncThunk<void, { task: ITask }>(
   'tasks/post',
   async ({ task }, { dispatch, rejectWithValue }) => {
-    const socket = getSocket();
-    if (socket) {
-      try {
-        socket.emit('addTask', task);
-
-        socket.on('taskAdded', (newTask: ITask) => {
-          dispatch(pushTask(newTask));
-        });
-      } catch (e) {
-        rejectWithValue(e);
+    try {
+      const { data } = await client.mutate({
+        mutation: ADD_TASK,
+        variables: { task },
+      });
+      console.log(data.addTask);
+      const newTask : ITask = {
+        id: data.addTask.id,
+        title: data.addTask.title,
+        deadline: data.addTask.deadline,
+        status: data.addTask.status
       }
+      dispatch(pushTask(newTask));
+    } catch (e) {
+      rejectWithValue(e);
     }
   },
 );
@@ -49,22 +52,20 @@ export const postTask = createAsyncThunk<void, { task: ITask }>(
 export const putTask = createAsyncThunk<void, { task: ITask; file?: File }>(
   'tasks/put',
   async ({ task, file }, { dispatch, rejectWithValue }) => {
-    const socket = getSocket();
-    if (socket) {
-      try {
-        if (file) {
-          const response = await api.put(`tasks/${task.id}`, { task, file });
-          dispatch(editTask(response.data));
-        } else {
-          socket.emit('updateTask', task);
-
-          socket.on('taskUpdated', (updatedTask: ITask) => {
-            dispatch(editTask(updatedTask));
-          });
-        }
-      } catch (e) {
-        rejectWithValue(e);
+    try {
+      if (file) {
+        const response = await api.put(`tasks/${task.id}`, { task, file });
+        dispatch(editTask(response.data));
+      } else {
+        const { data } = await client.mutate({
+          mutation: UPDATE_TASK,
+          variables: { id: task.id, task: task },
+        });
+        console.log(data.updateTask);
+        dispatch(editTask(data.updateTask));
       }
+    } catch (e) {
+      rejectWithValue(e);
     }
   },
 );
@@ -72,17 +73,14 @@ export const putTask = createAsyncThunk<void, { task: ITask; file?: File }>(
 export const deleteTask = createAsyncThunk<void, { task: ITask }>(
   'tasks/delete',
   async ({ task }, { dispatch, rejectWithValue }) => {
-    const socket = getSocket();
-    if (socket) {
-      try {
-        socket.emit('deleteTask', task.id);
-
-        socket.on('taskDeleted', (deletedTask: ITask) => {
-          dispatch(popTask(deletedTask));
-        });
-      } catch (e) {
-        rejectWithValue(e);
-      }
+    try {
+      const { data } = await client.mutate({
+        mutation: DELETE_TASK,
+        variables: { id: task.id },
+      });
+      dispatch(popTask(data.deleteTask));
+    } catch (e) {
+      rejectWithValue(e);
     }
   },
 );

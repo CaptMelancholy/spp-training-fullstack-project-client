@@ -1,8 +1,9 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
-import api from '../API/api';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { setUser } from '../store/slices/users/users.slice';
+import { CHECK_AUTH } from '../API/graphql';
+import { client } from '../API/client';
 
 export interface AuthContextType {
   auth: string | null;
@@ -25,8 +26,10 @@ export const AuthProvider = ({ children }: IProps) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await api.get('check-auth');
-        setAuth(response.data.username);
+        const { data } = await client.query({
+          query: CHECK_AUTH,
+        });
+        setAuth(data.checkAuth.username);
         dispatch(setUser(true));
       } catch (error) {
         console.error(error);

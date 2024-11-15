@@ -5,8 +5,9 @@ import DefaultRoutes from '../../routes/Routes';
 import { useForm } from 'react-hook-form';
 import { IRegistrationInputData } from './Registration.types';
 import { IUser, IUserRegistration } from '../../utils/User/User.types';
-import api from '../../API/api';
 import axios from 'axios';
+import { client } from '../../API/client';
+import { REGISTER_USER } from '../../API/graphql';
 
 export default function Registration() {
   const navigate = useNavigate();
@@ -20,43 +21,47 @@ export default function Registration() {
 
   const submitOptions = {
     username: {
-        required: 'You need to input your username',
+      required: 'You need to input your username',
     },
     email: {
-        required: 'You need to input your email',
+      required: 'You need to input your email',
     },
     password: {
-        required: 'You need to enter a password',
-        validate: (val: string) => {
-          function containsOnlyDigits(str: string) {
-            return /^\d+$/.test(str);
-          }
-  
-          function containsOnlyLetters(str: string) {
-            return /^[a-zA-Z]+$/.test(str);
-          }
-          if (val.length < 6) {
-            return 'Password must be not less then 6 characters (letters and numbers)';
-          }
-          if (containsOnlyDigits(val) || containsOnlyLetters(val)) {
-            return 'Password must include both letters and numbers';
-          }
-        },
+      required: 'You need to enter a password',
+      validate: (val: string) => {
+        function containsOnlyDigits(str: string) {
+          return /^\d+$/.test(str);
+        }
+
+        function containsOnlyLetters(str: string) {
+          return /^[a-zA-Z]+$/.test(str);
+        }
+        if (val.length < 6) {
+          return 'Password must be not less then 6 characters (letters and numbers)';
+        }
+        if (containsOnlyDigits(val) || containsOnlyLetters(val)) {
+          return 'Password must include both letters and numbers';
+        }
       },
-      confirm_password: {
-        required: 'You need to enter confirmation of password',
-        validate: (val: string) => {
-          if (watch('password') != val) {
-            return 'Passwords do not match';
-          }
-        },
+    },
+    confirm_password: {
+      required: 'You need to enter confirmation of password',
+      validate: (val: string) => {
+        if (watch('password') != val) {
+          return 'Passwords do not match';
+        }
       },
-  }
+    },
+  };
 
   const handleSubmitRegistration = (data: IRegistrationInputData) => {
-    const registerUser = async (user : IUser) => {
+    const registerUser = async (user: IUser) => {
       try {
-        await api.post('register', user);
+        console.log(user);
+        await client.mutate({
+          mutation: REGISTER_USER,
+          variables: { input: user },
+        });
         navigate(DefaultRoutes.success);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -71,20 +76,22 @@ export default function Registration() {
         }
       }
     };
-    
-    const user : IUserRegistration = {
+
+    const user: IUserRegistration = {
       username: data.username,
       email: data.email,
       password: data.password,
-      confirm_password: data.confirm_password
-    }
+      confirmPassword: data.confirm_password,
+    };
     registerUser(user);
     reset();
-  }
+  };
 
   return (
     <S.Container>
-      <S.RegistrationContainer onSubmit={handleSubmit(handleSubmitRegistration)}>
+      <S.RegistrationContainer
+        onSubmit={handleSubmit(handleSubmitRegistration)}
+      >
         <S.InputFormContainer>
           <C.Text
             $weight={400}
@@ -139,7 +146,9 @@ export default function Registration() {
             required
             {...register('confirm_password', submitOptions.confirm_password)}
           />
-          {errors.confirm_password && <C.Error>{errors.confirm_password.message}</C.Error>}
+          {errors.confirm_password && (
+            <C.Error>{errors.confirm_password.message}</C.Error>
+          )}
         </S.InputFormContainer>
         <C.Button
           type='submit'

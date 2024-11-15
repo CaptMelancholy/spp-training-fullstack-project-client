@@ -17,13 +17,19 @@ export default function MainPage() {
   const user = useSelector(usersSelector);
   useEffect(() => {
     const getOurTasks = async () => {
-      dispatch(getTasks());
+      await dispatch(getTasks());
     };
     getOurTasks();
   }, [tasks.length]);
   useEffect(() => {
     const getOurTasks = async () => {
-      dispatch(getTasks());
+      await dispatch(getTasks());
+    };
+    getOurTasks();
+  }, []);
+  useEffect(() => {
+    const getOurTasks = async () => {
+      await dispatch(getTasks());
     };
     getOurTasks();
   }, [user]);

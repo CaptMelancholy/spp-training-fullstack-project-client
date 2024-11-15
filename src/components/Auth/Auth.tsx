@@ -6,11 +6,11 @@ import { IAuthInputData } from './Auth.types';
 import { useForm } from 'react-hook-form';
 import { IUserAuthorization } from '../../utils/User/User.types';
 import axios from 'axios';
-import api from '../../API/api';
 import { useAuth } from '../../context/AuthHooks';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/slices/users/users.slice';
-import { connectSocket } from '../../API/socket';
+import { LOGIN_USER } from '../../API/graphql';
+import { client } from '../../API/client';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -50,10 +50,12 @@ export default function Auth() {
   const handleSubmitAuth = (data: IAuthInputData) => {
     const authUser = async (user: IUserAuthorization) => {
       try {
-        const response = await api.post('login', user);
-        setAuth(response.data.username);
+        const { data } = await client.mutate({
+          mutation: LOGIN_USER,
+          variables: { input: user },
+        });
+        setAuth(data.login.username);
         dispatch(setUser(true));
-        connectSocket();
         navigate(DefaultRoutes.home);
       } catch (error) {
         if (axios.isAxiosError(error)) {
